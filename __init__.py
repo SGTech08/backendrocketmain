@@ -8,6 +8,7 @@ These object can be used throughout project.
 1.) Objects from this file can be included in many blueprints
 2.) Isolating these object definitions avoids duplication and circular dependencies
 """
+login_manager = LoginManager()
 
 # Setup of key Flask object (app)
 app = Flask(__name__)
@@ -18,6 +19,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = dbURI
 app.config['SECRET_KEY'] = 'SECRET_KEY'
 db = SQLAlchemy()
 Migrate(app, db)
+login_manager.init_app(app)
 
 # Images storage
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # maximum size of uploaded content

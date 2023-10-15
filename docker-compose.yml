@@ -9,3 +9,8 @@ services:
                         - ./volumes:/volumes
                         - ./instance:/instance
                 restart: unless-stopped
+
+
+
+
+#sudo ln -s /etc/nginx/sites-available/backendrocketmain /etc/nginx/sites-enabled
