@@ -1,38 +1,36 @@
-from flask import Blueprint, jsonify, request
-from flask_restful import Api, Resource
-from __init__ import app, db
-from model.editedrecipe import EditedRecipe
+from __init__ import db
+from datetime import datetime
 
-edited_recipe_api = Blueprint('edited_recipe', __name__, url_prefix='/api/editedrecipe')
-api = Api(edited_recipe_api)
+class EditedRecipe(db.Model):
+    __tablename__ = 'edited_recipes'
 
-class EditedRecipes:
-    class _getEditedRecipes(Resource):
-        def get(self):
-            edited_recipes = db.session.query(EditedRecipe).all()
-            return jsonify([recipe.alldetails() for recipe in edited_recipes])
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128), nullable=False)
+    ingredients = db.Column(db.String(256), nullable=False)
+    instructions = db.Column(db.String(256), nullable=True)
+    image_name = db.Column(db.String(64), nullable=True)
+    cleaned_ingredients = db.Column(db.String(256), nullable=True)
+    edited_by = db.Column(db.String(128), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    class _getEditedRecipeDetails(Resource):
-        def get(self):
-            recipe_id = int(request.args.get("id"))
-            recipe = db.session.query(EditedRecipe).filter(EditedRecipe.id == recipe_id).first()
-            return jsonify(recipe.alldetails())
+    def __init__(self, title, ingredients, instructions, image_name, cleaned_ingredients, edited_by):
+        self.title = title
+        self.ingredients = ingredients
+        self.instructions = instructions
+        self.image_name = image_name
+        self.cleaned_ingredients = cleaned_ingredients
+        self.edited_by = edited_by
 
-    class _addEditedRecipe(Resource):
-        def post(self):
-            data = request.get_json()
-            new_recipe = EditedRecipe(
-                title=data.get("title"),
-                ingredients=data.get("ingredients"),
-                instructions=data.get("instructions"),
-                image_name=data.get("image_name"),
-                cleaned_ingredients=data.get("cleaned_ingredients"),
-                edited_by=data.get("edited_by")  # Assuming "edited_by" is included in the request data
-            )
-            db.session.add(new_recipe)
-            db.session.commit()
-            return jsonify({"message": "Recipe added successfully"})
+    def alldetails(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "ingredients": self.ingredients,
+            "instructions": self.instructions,
+            "image_name": self.image_name,
+            "cleaned_ingredients": self.cleaned_ingredients,
+            "edited_by": self.edited_by,
+            "timestamp": self.timestamp
+        }
 
-api.add_resource(EditedRecipes._getEditedRecipes, "/recipes")
-api.add_resource(EditedRecipes._getEditedRecipeDetails, "/recipedetails")
-api.add_resource(EditedRecipes._addEditedRecipe, "/addrecipe")
+# Include other models and functions as needed
