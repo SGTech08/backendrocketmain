@@ -17,8 +17,10 @@ def add_recipe(title, recipe):
 
 # Function to save the recipe data to a CSV file
 def save_to_csv():
-    with open('editedrecipedatabase.csv', mode='w', newline='') as file:
+    file_path = 'api/editedrecipedatabase.csv'
+    with open(file_path, mode='w', newline='') as file:
         fieldnames = ['id', 'title', 'recipe']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(recipes_data)
+
