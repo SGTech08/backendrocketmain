@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///recipes.db'  # SQLite database file named recipes.db
 db = SQLAlchemy(app)
 api = Api(app)
@@ -44,5 +46,6 @@ api.add_resource(RecipeListResource, '/recipes')
 api.add_resource(RecipeResource, '/recipes/<int:recipe_id>')
 
 if __name__ == '__main__':
-    db.create_all()  # Creates the database tables defined by the model before running the app
-    app.run(debug=True)  # Running the Flask application
+    with app.app_context():  # Adding an application context here
+        db.create_all()  # Creates the database tables defined by the model before running the app
+    app.run(debug=True)
